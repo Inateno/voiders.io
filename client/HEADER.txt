@@ -1,0 +1,3 @@
+/*
+  Game made during Ludum Dare 42 by @Inateno
+*/
