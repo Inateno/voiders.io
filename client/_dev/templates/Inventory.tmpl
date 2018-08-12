@@ -1,0 +1,24 @@
+<h2>Inventory</h2>
+
+<div class="container">
+  <div class="items-list">
+    <% _.each( inventory, function( item, resId ) { %>
+      <div class="item <%= resId == currentItem ? 'active' : '' %>" data-target="<%= resId %>">
+        <div class="item-bg resource-<%= resId %>">x<%= item.q %></div>
+        <div class="item-name"><%= resId %></div>
+      </div>
+    <% } ) %>
+  </div>
+
+  <div class="item-info">
+    <% if ( currentItem ) { %>
+      <h3>Name: <%= dictionary[ currentItem + "-name" ] %></h3>
+      <h4>Type: <%= dictionary[ currentItem + "-type" ] %></h4>
+      <p>Description: <%= dictionary[ currentItem + "-desc" ] %></p>
+    <% } %>
+  </div>
+</div>
+
+<div class="lower-buttons">
+  <button class="action okBtn">Close</button>
+</div>

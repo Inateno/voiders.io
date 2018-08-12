@@ -39,14 +39,18 @@ function()
         ,[ "cursor", "ui/target.png", { "totalFrame": 1, "animated":false, "isReversed": false } ]
         ,[ "actionMode", "ui/mode.png", { "totalFrame": 1, "totalLine": 2, "animated":false, "isReversed": false } ]
         ,"tiles/atlas-1.json"
+        
+        // resources
         ,"resources/resources.json"
+        ,[ "tree-magic", "resources/tree-magic.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
+        ,[ "grass-statue", "resources/grass-statue.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
         
         //envs
         ,[ "tree-1", "env/tree-1.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
         ,[ "tree-1-2", "env/tree-1-2.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
         ,[ "tree-2", "env/tree-2.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
-        ,[ "tree-magic", "env/tree-magic.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
         ,[ "house-1", "env/house-1.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
+        ,[ "altar", "env/altar.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]
         
         ,[ "bg", "env/bg.jpg", { "totalFrame": 1, "animated":false, "isReversed": false } ]
         // ,[ "canyon", "env/canyon.png", { "totalFrame": 1, "animated":false, "isReversed": false } ]

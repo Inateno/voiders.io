@@ -1,0 +1,38 @@
+<div class="craft-container">
+  <div class="items-list small-list">
+    <% _.each( inventory, function( item, resId ) { %>
+      <div
+        class="item 
+         <%= resId == currentItem ? 'active' : '' %> 
+         <%= item.q - ( tempUsed[ resId ] || 0 ) <= 0 ? 'empty' : '' %>"
+        data-target="<%= resId %>">
+        <div class="item-bg resource-<%= resId %>">x<%= item.q - ( tempUsed[ resId ] || 0 ) %></div>
+        <div class="item-name"><%= resId %></div>
+      </div>
+    <% } ) %>
+  </div>
+  
+  <div class="craft-box">
+    <h2>Altar of Craft</h2>
+    <p>Craft a tile with the power of resources, each line is dedicated to a purpose</p>
+    <div class="slots">
+      <% _.each( slots, function( slot, index ) { %>
+        <%= index == 0 ? '<div>' : '' %>
+        
+        <div class="craft-slot slot-<%= index %> <%= selectedSlot == index ? 'active' : ''  %> resource-<%= slot %>"
+          data-target="<%= index %>"><%= slot %></div>
+        
+        <%= ( index + 1 ) % 3 == 0 ? '</div>' : '' %>
+        <%= ( index + 1 ) % 3 == 0 && index < 5 ? '<div>': '' %>
+      <% } ); %>
+    </div>
+    <div class="arrow-result"></div>
+    <div class="craft-result tile-<%= tileCreated %>"><%= tileCreated %></div>
+    
+    <div class="craft-buttons">
+      <button class="action closeBtn">Close</button>
+      <button class="action craftBtn">Craft</button>
+    </div>
+    
+  </div>
+</div>

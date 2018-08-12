@@ -14,7 +14,9 @@ function()
     ,"right":{"keycodes":[ "K.right" , 'K.d' ] }
     ,"up":{"keycodes":[ "K.up" , 'K.z', 'K.w' ] }
     ,"down":{"keycodes":[ "K.down" , 'K.s' ] }
-    ,"jump":{"keycodes":[ 'G0.B.A', "K.space" ], "stayOn": true }
+    
+    ,"inventory":{"keycodes":[ 'G0.B.X', "K.i" ] }
+    ,"tiles-book":{"keycodes":[ 'G0.B.Y', "K.tab" ] }
     
     ,"action":{"keycodes":[ "K.space" , 'G0.B.A' ]/*, "interval": 100*/ }
     ,"switch-mode":{"keycodes":[ "K.ctrl" , 'G0.B.B' ]/*, "interval": 100*/ }

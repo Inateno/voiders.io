@@ -15,10 +15,10 @@ function( DE, config )
     
     var brush = new DE.GameObject( {
       zindex: 100
-      ,renderer: new DE.SheetRenderer( config.TILES[ Game.currentTile ].sheetIds[ 0 ], { scale: 0.5 } )
+      ,renderer: new DE.SheetRenderer( config.TILES[ 1 ].sheetIds[ 0 ], { scale: 0.5 } )
     } );
     
-    brush.currentTile = Game.currentTile;
+    brush.currentTile;
     brush.enable = false;
     brush.axes = { x: 0, y: 1 };
     brush.worldPos = { x: 0, y: 0 };
@@ -49,6 +49,7 @@ function( DE, config )
       if ( wy < config.WORLD_DATA.length
         && wx < config.WORLD_DATA[ wy ].length
         && config.WORLD_DATA[ wy ][ wx ] != 0 ) {
+        // TODO play sound "error"
         console.log( "no way, already something here fucker" );
         return;
       }
@@ -73,8 +74,15 @@ function( DE, config )
         //   }
         //   // config.WORLD_DATA[ wy ][ wx ];
         // }
-        if ( wy >= config.WORLD_DATA.length || wx >= config.WORLD_DATA[ wy ].length ) {
+        if ( wy < 0 || wx < 0 || wy >= config.WORLD_DATA.length || wx >= config.WORLD_DATA[ wy ].length ) {
+          // TODO play sound "error"
           console.warn( "limit reach, you literally ran out of space" );
+          return;
+        }
+        
+        if ( !Inventory.hasTile( this.currentTile ) ) {
+          // TODO play sound "empty"
+          console.warn( "go make some" );
           return;
         }
         
@@ -96,12 +104,15 @@ function( DE, config )
         for ( var i = 0; i < ns.length; ++i )
         {
           if ( ns[ i ] != 0 && tileData.compatibleTilesTypes.indexOf( config.TILES[ ns[ i ] ].type ) == -1 ) {
+            // TODO play sound "error"
             console.warn( "Incompatible type detected" );
+            this.renderer.setTint( "0xff3333" );
             return;
           }
         }
         
         config.WORLD_DATA[ wy ][ wx ] = this.currentTile;
+        Inventory.useTile( this.currentTile );
         DE.emit( "new-tiles", [ { x: wx, y: wy, id: this.currentTile } ] );
       }
     };
@@ -126,10 +137,13 @@ function( DE, config )
       brush.worldPos.y = wy;
       
       // not a free slot
-      if ( wy >= 0 && wx >= 0
-        && wy < config.WORLD_DATA.length
-        && wx < config.WORLD_DATA[ wy ].length
-        && config.WORLD_DATA[ wy ][ wx ] != 0 ) {
+      if ( wy < 0 || wx < 0
+        || !Inventory.hasTile( brush.currentTile )
+        || wy >= config.WORLD_DATA.length
+        || wx >= config.WORLD_DATA[ wy ].length
+        || ( wy < config.WORLD_DATA.length
+          && wx < config.WORLD_DATA[ wy ].length
+          && config.WORLD_DATA[ wy ][ wx ] != 0 ) ) {
         brush.renderer.setTint( "0xff3333" );
       }
       else {

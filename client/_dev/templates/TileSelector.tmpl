@@ -1,21 +1,20 @@
 <h2>Select a Tile</h2>
 
 <div class="container">
-  <div class="tiles-list">
-    <% _.each( tiles, function( tile ) {
-      if ( !tile.craftable ){ return; } %>
-      <div class="tile <%= tile.id == currentTile ? 'active' : '' %>" data-target="<%= tile.id %>">
-        <div class="tile-bg tile-<%= tile.id %>"></div>
-        <div class="tile-name"><%= tile.textId %></div>
+  <div class="items-list">
+    <% _.each( inventory, function( item, tileId ) { %>
+      <div class="item <%= tileId == currentItem ? 'active' : '' %>" data-target="<%= tileId %>">
+        <div class="item-bg tile-<%= tileId %>">x<%= item.q %></div>
+        <div class="item-name"><%= tileId %></div>
       </div>
     <% } ) %>
   </div>
 
-  <div class="tile-info">
-    <% if ( currentTile ) { %>
-      <h3>Name: <%= tiles[ currentTile ].textId %></h3>
-      <h4>Type: <%= tiles[ currentTile ].type %></h4>
-      <h4>Compatible with: <%= tiles[ currentTile ].compatibleTilesTypes %></h4>
+  <div class="item-info">
+    <% if ( currentItem ) { %>
+      <h3>Name: <%= tilesData[ currentItem ].textId %></h3>
+      <h4>Type: <%= tilesData[ currentItem ].type %></h4>
+      <h4>Compatible with: <%= tilesData[ currentItem ].compatibleTilesTypes %></h4>
     <% } %>
   </div>
 </div>

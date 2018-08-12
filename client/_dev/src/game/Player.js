@@ -1,5 +1,5 @@
-define( [ 'DREAM_ENGINE', 'config' ],
-function( DE, config )
+define( [ 'DREAM_ENGINE', 'config', 'Inventory' ],
+function( DE, config, Inventory )
 {
   function Player( index, data )
   {
@@ -81,6 +81,18 @@ function( DE, config )
         if ( obj.vector2.getDistance( this.getWorldPos() ) < obj.colliderRadius ) {
           console.log( this.parent );
           obj.getDamage( this.parent );
+          return; // can only attack one stuff at a time ?
+        }
+      }
+      
+      for ( var i = 0; i < config.instancied_world_interactive.length; ++i )
+      {
+        obj = config.instancied_world_interactive[ i ];
+        console.log( obj.vector2.getDistance( this.getWorldPos() ), config.ENVS[ obj.id ].colliderRadius );
+        if ( obj.vector2.getDistance( this.getWorldPos() ) < config.ENVS[ obj.id ].colliderRadius ) {
+          console.log( this.parent );
+          DE.emit( config.ENVS[ obj.id ].triggeredMessage );
+          return; // can only attack one stuff at a time ?
         }
       }
     };
@@ -252,9 +264,14 @@ function( DE, config )
     
   };
   
-  Player.prototype.getLoot = function()
+  Player.prototype.getLoot = function( resourceId )
   {
+    if ( this.index != config.myIndex ) { return; }
     
+    // TODO play juicy sound
+    
+    // TODO-SOCKET: this will be removed and put inside the socket
+    Inventory.addResource( resourceId );
   };
   
   return Player;

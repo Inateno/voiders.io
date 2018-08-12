@@ -66,8 +66,6 @@ function(
     x: 1000 + 2,
     y: 1000 + 3
   };
-  Game.currentTile = 1;
-  
   Game.onload = function()
   {
 
@@ -176,9 +174,13 @@ function(
           , y       : ( wObj.wx + wObj.wy ) * config.WORLD.TILE_H_HALF
           , zindex  : 2
           , renderer: new DE.SpriteRenderer( config.ENVS[ wObj.id ].rendererOpts )
+          , id      : wObj.id
         } );
         Game.scene.add( obj );
         config.instancied_world_objects.push( obj );
+        if ( config.ENVS[ wObj.id ].canInteract ) {
+          config.instancied_world_interactive.push( obj );
+        }
       }
       
       for ( var i = 0, obj, wObj; i < config.WORLD_RESOURCES.length; ++i )
@@ -204,6 +206,7 @@ function(
     window.player = player;
     window.config = config;
     window.mapTiles = config.mapTiles;
+    window.uiView = uiView;
     
     Game.scene.add( player, Game.cursor, Game.brush );
     

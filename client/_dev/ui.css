@@ -65,6 +65,10 @@
   right : 1rem;
   bottom: 7rem;
 }
+#MainUI .bottom-right-controls button.btn-third {
+  right : 1rem;
+  bottom: 16rem;
+}
 #MainUI .bottom-right-controls button.action-attack { background-position: 0 0; }
 #MainUI .bottom-right-controls button.action-attack:hover { background-position: 0 100%; }
 #MainUI .bottom-right-controls button.action-attack:active { background-position: 0 200%; }
@@ -74,9 +78,12 @@
 #MainUI .bottom-right-controls button.action-create { background-position: 200% 0; }
 #MainUI .bottom-right-controls button.action-create:hover { background-position: 200% 100%; }
 #MainUI .bottom-right-controls button.action-create:active { background-position: 200% 200%; }
-#MainUI .bottom-right-controls button.action-change { background-position: 500% 0; }
-#MainUI .bottom-right-controls button.action-change:hover { background-position: 500% 100%; }
-#MainUI .bottom-right-controls button.action-change:active { background-position: 500% 200%; }
+#MainUI .bottom-right-controls button.action-book { background-position: 500% 0; }
+#MainUI .bottom-right-controls button.action-book:hover { background-position: 500% 100%; }
+#MainUI .bottom-right-controls button.action-book:active { background-position: 500% 200%; }
+#MainUI .bottom-right-controls button.action-inventory { background-position: 500% 0; }
+#MainUI .bottom-right-controls button.action-inventory:hover { background-position: 500% 100%; }
+#MainUI .bottom-right-controls button.action-inventory:active { background-position: 500% 200%; }
 
 .fs-window {
   position  : absolute;
@@ -90,12 +97,16 @@
   padding   : 1rem;
   color     : black;
 }
+.fs-window.w-o-bg {
+  background: none;
+  border    : none;
+}
 
 
-#TileSelector .tiles-list {
+.fs-window .items-list {
   width: 70%;
 }
-#TileSelector .tiles-list .tile {
+.fs-window .items-list .item {
   display   : inline-block;
   width     : 5rem;
   height    : 7rem;
@@ -104,18 +115,30 @@
   cursor    : pointer;
   transition: all 0.2s;
 }
-#TileSelector .tiles-list .tile:hover,
-#TileSelector .tiles-list .tile.active {
+.fs-window .items-list .item.empty {
+  opacity: 0.4;
+  cursor : not-allowed;
+}
+.fs-window .items-list .item.empty.active,
+.fs-window .items-list .item.empty:hover {
+  background: rgba(148, 80, 80, 0.49);
+}
+.fs-window .items-list .item:hover,
+.fs-window .items-list .item.active {
   background: rgba(148, 146, 146, 0.49);
 }
-#TileSelector .tiles-list .tile .tile-bg {
+
+.fs-window .items-list .item .item-bg {
   display   : inline-block;
   width     : 4rem;
   height    : 4rem;
   background: green;
 }
+.fs-window .items-list .item.empty .item-bg {
+  background: rgb( 200, 100, 100 );
+}
 
-#TileSelector .tile-info {
+.fs-window .item-info {
   position  : absolute;
   top       : 0;
   left      : 71%;
@@ -125,11 +148,86 @@
   padding: 0.5rem 1rem;
 }
 
-#TileSelector .lower-buttons {
+.fs-window .lower-buttons {
   position  : absolute;
   bottom    : 0.5rem;
   text-align: center;
   width     : 70%;
+}
+
+.craft-container {
+  width     : 30rem;
+  float     : right;
+  position  : relative;
+}
+
+.craft-box {
+  text-align: center;
+  background: rgb(226, 205, 186);
+  border    : 1rem solid rgb(103, 62, 1);
+  z-index   : 1;
+  position  : absolute;
+  width     : 100%;
+}
+.craft-container .items-list {
+  width     : auto;
+  display   : inline-block;
+  width     : 24rem;
+  position  : absolute;
+  text-align: center;
+  background: rgb(226, 205, 186);
+  border    : 1rem solid rgb(103, 62, 1);
+  left      : -2%;
+  margin-top: 3rem;
+  top       : 0;
+  transition: left 0.5s;
+}
+.craft-container .items-list.opened {
+  left      : -78%;
+}
+
+.slots {
+  height: 18rem;
+}
+.slots>div {
+  height: 6rem;
+  text-align: center;
+  width: 18.1rem;
+  margin: auto;
+}
+.craft-slot {
+  display   : inline-block;
+  width     : 5rem;
+  height    : 5rem;
+  background: #7880002e;
+  cursor    : pointer;
+  border    : 1px solid #944004;
+  float     : left;
+  margin    : 0.5rem;
+}
+.craft-slot:hover {
+  background: #80700061;
+}
+.craft-slot.active {
+  background: #bdc71991;
+}
+
+.arrow-result {
+  height: 10rem;
+  background: rgb(100,100,100);
+  margin    : 1rem;
+}
+
+.craft-result {
+  width     : 10rem;
+  height    : 10rem;
+  display   : inline-block;
+  background: #7880002e;
+  border    : 1px solid #944004;
+}
+
+.craft-buttons {
+  margin: 1rem;
 }
 
 

@@ -34,6 +34,7 @@ require.config( {
     ,'Player'        : 'game/Player'
     ,'Tile'          : 'game/Tile'
     ,'ResourceSpot'  : 'game/ResourceSpot'
+    ,'Inventory'     : 'game/Inventory'
     ,'loadMap'       : 'game/loadMap'
     ,'loadBuildBrush': 'game/loadBuildBrush'
     

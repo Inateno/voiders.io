@@ -29,8 +29,11 @@ function( DE, config )
     
     this.energy -= player.atk;
     // dropEvery // TODO use this later
-    var drop = this._data.minimumDrop + Math.random() * this._data.extraLuckDrop >> 0;
+    var drop = this._data.minimumDrop + Math.random() * ( this._data.extraLuckDrop + 0.2 ) >> 0;
+    
+    // retrieve vector between the player and the spot to create the good offset for the resource
     var vector2 = new DE.Vector2().getVector( player, this );
+    var spot = this;
     
     for ( var i = 0, obj, posr; i < drop; ++i )
     {
@@ -44,11 +47,11 @@ function( DE, config )
       } );
       obj.moveTo( { x: 0, y: 0 }, 800, function()
       {
-        player.getLoot( this );
+        player.getLoot( spot._data.drop );
         this.fadeOut( 200, true, this.askToKill );
       } );
       
-      // parent should be the scene for this type of object
+      // add the object to the player this way even if the player move, the object will follow it
       player.add( obj );
     }
   }

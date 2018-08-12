@@ -23,24 +23,20 @@ function( DE, config )
   Tile.prototype.updateTile = function( newTile )
   {
     this.tileId = newTile;
+    var sheets = config.TILES[ newTile ].sheetIds;
     this.x = ( this.worldPos.x - this.worldPos.y ) * config.WORLD.TILE_W_HALF;
     this.y = ( this.worldPos.x + this.worldPos.y ) * config.WORLD.TILE_H_HALF;
-    if ( newTile == 0 ) {
-      this.renderer.texture = DE.PIXI.utils.TextureCache[ "void" ];
-    }
-    else {
-      this.renderer.texture = DE.PIXI.utils.TextureCache[ "tile-" + config.WORLD_DATA[ this.worldPos.y ][ this.worldPos.x ] ];
-    }
+    this.renderer.texture = DE.PIXI.utils.TextureCache[ sheets[ Math.random() * sheets.length >> 0 ] ];
     this.toggleVoid();
   };
   
   Tile.prototype.fadeVoid = function()
   {
     if ( this.alpha < 0.8 ) {
-      this.fade( this.alpha, 1, 1500 + Math.random() * 1000, true, this.fadeVoid );
+      this.fade( this.alpha, 1, 1500 + Math.random() * 1000, false, this.fadeVoid );
     }
     else {
-      this.fade( this.alpha, 0.5, 1500 + Math.random() * 1000, true, this.fadeVoid );
+      this.fade( this.alpha, 0.5, 1500 + Math.random() * 1000, false, this.fadeVoid );
     }
   };
   

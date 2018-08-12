@@ -1,15 +1,15 @@
 define( [
   "DREAM_ENGINE", "jquery", "underscore", "backbone", "config", "tools.getTemplate"
   , "view.TileSelector"
-  // , "view.Craft"
-  // , "view.Inventory"
+  , "view.Inventory"
+  , "view.Craft"
   // , "view.Settings"
 ]
 , function(
   DE, $, _, Backbone, config, getTemplate
   , ViewTileSelector
-  // , ViewCraft
-  // , ViewInventory
+  , ViewInventory
+  , ViewCraft
   // , ViewSettings
 )
 {
@@ -24,10 +24,11 @@ define( [
       
       $( "#render" ).append( this.$el );
       this.$el.hide();
-      this.listenTo( Backbone, "display-tiles-selector", this.showTileSelector );
-      
+      DE.on( "open-craft", this.showCraft, this );
       this.views = {
-        tileSelector: new ViewTileSelector()
+        tileSelector: new ViewTileSelector(),
+        inventory: new ViewInventory(),
+        craft: new ViewCraft()
       };
       
       getTemplate( "Main", function( data )
@@ -39,16 +40,19 @@ define( [
           self.render( self.lastRenderArgs );
         self.waitForRender = false;
       } );
+      
+      DE.Inputs.on( "keyDown", "inventory", function() { self.showInventory(); } );
+      DE.Inputs.on( "keyDown", "tiles-book", function() { self.showTileSelector(); } );
     }
     
     , events: {
-      "click .chooseTile" : "showTileSelector"
-      ,"click .settings"  : "showSettings"
+      "click .settings"         : "showSettings"
       ,"click .mode-swapper div": "changePlayerMode"
-      ,"click .action-attack": "playerAttack"
-      ,"click .action-defend": "playerDefend"
-      ,"click .action-create": "playerCreate"
-      ,"click .action-change": "showTileSelector"
+      ,"click .action-attack"   : "playerAttack"
+      ,"click .action-defend"   : "playerDefend"
+      ,"click .action-create"   : "playerCreate"
+      ,"click .action-book"     : "showTileSelector"
+      ,"click .action-inventory": "showInventory"
     }
     
     , render: function()
@@ -68,10 +72,9 @@ define( [
       return this;
     }
     
-    , showTileSelector: function()
-    {
-      this.views.tileSelector.show();
-    }
+    , showTileSelector: function() { this.views.tileSelector.toggle(); }
+    , showInventory: function() { this.views.inventory.toggle(); }
+    , showCraft: function() { this.views.craft.show(); }
     
     , playerAttack: function(){ DE.emit( "player-update-input", "action" ); }
     , playerCreate: function(){ DE.emit( "player-update-input", "action" ); }
