@@ -41391,6 +41391,38 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
   };
   
   /**
+   * getWorldPos return the world position, adding all x/y offset from all parents
+   * if parents are rotated, the matrix is applied to recover the world x/y offset
+   * checking parent with "getWorldPos" because we want to ignore PIXI child (scene and camera are standard PIXI.Container)
+   * @public
+   * @memberof GameObject
+   */
+  GameObject.prototype.getWorldPos = function()
+  {
+    if ( this.parent && this.parent.getWorldPos )
+    {
+      var pos = this.parent.getWorldPos();
+      var harmonics = this.parent.vector2.getHarmonics();
+      
+      return { x: -(-this.position.x * harmonics.cos + this.position.y * harmonics.sin) + pos.x
+        , y: -(-this.position.x * harmonics.sin + this.position.y * -harmonics.cos) + pos.y
+        , z: this.z + pos.z
+      };
+    }
+    
+    return { x: this.x, y: this.y, z: this.z };
+  };
+  
+  /**
+   * DEPRECATED you should use getWorldPos for real world position and getGlobalPosition (from PIXI) to get the screen position
+   * support for old version of the engine, return world Position
+   * @deprecated
+   * @public
+   * @memberOf GameObject
+   */
+  GameObject.prototype.getPos = GameObject.prototype.getWorldPos;
+  
+  /**
    * Sort gameObjects in the scene along z axis or using z-index for objects on the same same plan.
    * The priority is the following, z, z-index, y, x
    * You shouldn't call this method directly because engine do it for you, but in some case it can be useful to do it yourself
@@ -41400,7 +41432,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
   GameObject.prototype.sortGameObjects = sortGameObjects;
   
   /**
-   * DEPRECATED you should use getGlobalPosition (from PIXI)
+   * DEPRECATED
    * support for old version using trigger and not emit (I personally prefer emit when it's a client/server communication, and trigger when it's not services communication related )
    * but the engine will always support trigger AND emit
    * @deprecated
@@ -41408,15 +41440,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
    * @memberOf GameObject
    */
   GameObject.prototype.trigger = GameObject.prototype.emit;
-  
-  /**
-   * DEPRECATED you should use getGlobalPosition (from PIXI)
-   * support for old version of the engine, return world Position
-   * @deprecated
-   * @public
-   * @memberOf GameObject
-   */
-  GameObject.prototype.getPos  = GameObject.prototype.getGlobalPosition;
   
   
   GameObject.prototype.DEName = "GameObject";
@@ -43665,26 +43688,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
       }
     } );
     
-    if ( this.children ) {
+    if ( this.children && !this.gameObjects ) {
       this.children.sort( function( a, b )
       {
-        if ( b.z == a.z ) {
-        
-          if ( b.zindex == a.zindex ) {
-            if ( b.y == a.y ) {
-              return a.x - b.x;
-            }
-            else {
-              return a.y - b.y;
-            }
-          }
-          else {
-            return a.zindex - b.zindex;
-          }
-          
+        if ( b.y == a.y ) {
+          return a.x - b.x;
         }
         else {
-          return b.z - a.z;
+          return a.y - b.y;
         }
       } );
     }
@@ -48252,15 +48263,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_
    */
   GameObject.prototype.moveTo = function( pos, duration, callback, curveName ) // TODO add curveName (not coded)
   {
-    if ( pos.getGlobalPosition ) {
-      var z = pos.z;
-      pos = pos.getGlobalPosition();
-      pos.z = z;
-      var parentPos = this.parent.getGlobalPosition();
-      
-      pos.x = pos.x - parentPos.x;
-      pos.y = pos.y - parentPos.y;
-      pos.z = pos.z - this.parent.z;
+    if ( pos.getWorldPos ) {
+      pos = pos.getWorldPos();
     }
     
     var myPos = this;

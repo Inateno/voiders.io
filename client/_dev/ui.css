@@ -1,0 +1,174 @@
+#MainUI {
+  position      : absolute;
+  top           : 0;
+  left          : 0;
+  right         : 0;
+  bottom        : 0;
+  pointer-events: none;
+}
+
+#MainUI .mode-swapper {
+  position   : absolute;
+  width      : 10.5rem;
+  margin-left: -5rem;
+  left       : 50%;
+  bottom     : 0;
+}
+
+#MainUI .mode-fight, #MainUI .mode-create {
+  pointer-events     : all;
+  height             : 5rem;
+  width              : 5rem;
+  display            : inline-block;  
+  cursor             : pointer;
+  background-image   : url( 'imgs/ui/mode.png' );
+  background-position: 0 0;
+  background-size    : 200% 200%;
+}
+#MainUI .mode-fight {
+  background-position: 0 100%;
+}
+#MainUI .mode-fight.active {
+  background-position: 0 0;
+}
+#MainUI .mode-create {
+  background-position: 100% 0;
+}
+#MainUI .mode-create.active {
+  background-position: 100% 100%;
+}
+
+#MainUI .bottom-right-controls {
+  position: absolute;
+  right   : 0;
+  bottom  : 0;
+  width   : 14rem;
+  height  : 14rem;
+}
+
+#MainUI .bottom-right-controls button {
+  pointer-events  : all;
+  border-radius   : 50px;
+  cursor          : pointer;
+  width           : 7rem;
+  height          : 7rem;
+  position        : absolute;
+  background-image: url( 'imgs/ui/btn-actions.png' );
+  background-size : 400% 300%;
+  outline         :0 !important;
+}
+#MainUI .bottom-right-controls button.btn-first {
+  right : 7rem;
+  bottom: 1rem;
+}
+#MainUI .bottom-right-controls button.btn-second {
+  right : 1rem;
+  bottom: 7rem;
+}
+#MainUI .bottom-right-controls button.action-attack { background-position: 0 0; }
+#MainUI .bottom-right-controls button.action-attack:hover { background-position: 0 100%; }
+#MainUI .bottom-right-controls button.action-attack:active { background-position: 0 200%; }
+#MainUI .bottom-right-controls button.action-defend { background-position: 300% 0; }
+#MainUI .bottom-right-controls button.action-defend:hover { background-position: 300% 100%; }
+#MainUI .bottom-right-controls button.action-defend:active { background-position: 300% 200%; }
+#MainUI .bottom-right-controls button.action-create { background-position: 200% 0; }
+#MainUI .bottom-right-controls button.action-create:hover { background-position: 200% 100%; }
+#MainUI .bottom-right-controls button.action-create:active { background-position: 200% 200%; }
+#MainUI .bottom-right-controls button.action-change { background-position: 500% 0; }
+#MainUI .bottom-right-controls button.action-change:hover { background-position: 500% 100%; }
+#MainUI .bottom-right-controls button.action-change:active { background-position: 500% 200%; }
+
+.fs-window {
+  position  : absolute;
+  top       : 0;
+  bottom    : 0;
+  left      : 0;
+  right     : 0;
+  margin    : 2rem;
+  background: rgb(226, 205, 186);
+  border    : 1rem solid rgb(103, 62, 1);
+  padding   : 1rem;
+  color     : black;
+}
+
+
+#TileSelector .tiles-list {
+  width: 70%;
+}
+#TileSelector .tiles-list .tile {
+  display   : inline-block;
+  width     : 5rem;
+  height    : 7rem;
+  text-align: center;
+  padding   : 0.5rem;
+  cursor    : pointer;
+  transition: all 0.2s;
+}
+#TileSelector .tiles-list .tile:hover,
+#TileSelector .tiles-list .tile.active {
+  background: rgba(148, 146, 146, 0.49);
+}
+#TileSelector .tiles-list .tile .tile-bg {
+  display   : inline-block;
+  width     : 4rem;
+  height    : 4rem;
+  background: green;
+}
+
+#TileSelector .tile-info {
+  position  : absolute;
+  top       : 0;
+  left      : 71%;
+  right     : 0;
+  bottom    : 0;
+  background: rgb(100,100,100);
+  padding: 0.5rem 1rem;
+}
+
+#TileSelector .lower-buttons {
+  position  : absolute;
+  bottom    : 0.5rem;
+  text-align: center;
+  width     : 70%;
+}
+
+
+
+/* 1159 655 */
+html, #MainUI{ font-size: 12px; }
+
+@media screen and (max-height: 654px), screen and (max-width: 1159px) {
+  html, #MainUI { font-size: 10px; }
+}
+
+@media screen and (max-height: 535px), screen and (max-width: 945px) {
+  html, #MainUI { font-size: 8px; }
+}
+
+@media screen and (max-height: 380px), screen and (max-width: 700px) {
+  html, #MainUI { font-size: 7px; }
+}
+
+@media screen and (max-height: 300px), screen and (max-width: 600px) {
+  html, #MainUI { font-size: 5px; }
+}
+
+@media screen and (min-height: 695px) and (min-width: 1235px) {
+  html, #MainUI { font-size: 13px; }
+}
+
+@media screen and (min-height: 735px) and (min-width: 1306px) {
+  html, #MainUI { font-size: 14px; }
+}
+
+@media screen and (min-height: 825px) and (min-width: 1460px) {
+  html, #MainUI { font-size: 16px; }
+}
+
+@media  (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  html, #MainUI { font-size: 11px; }
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) and (min-width: 1050px) and (min-height: 600px) {
+  html, #MainUI { font-size: 16px; }
+}

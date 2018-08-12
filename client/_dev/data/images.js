@@ -39,6 +39,7 @@ function()
         ,[ "cursor", "ui/target.png", { "totalFrame": 1, "animated":false, "isReversed": false } ]
         ,[ "actionMode", "ui/mode.png", { "totalFrame": 1, "totalLine": 2, "animated":false, "isReversed": false } ]
         ,"tiles/atlas-1.json"
+        ,"resources/resources.json"
         
         //envs
         ,[ "tree-1", "env/tree-1.png", { "totalFrame": 1, "totalLine": 1, "animated":false, "isReversed": false } ]

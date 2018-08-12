@@ -17,6 +17,7 @@ function( DE, config )
     this.life  = data.life || 1;
     this.level = data.level || 1;
     this.speed = 5;
+    this.atk = 1;
     this.currentMode = "fight"; // "create"
     this.skin = data.skin || "player";
     
@@ -38,11 +39,15 @@ function( DE, config )
       y: data.pos.y
     };
     
+    this.addAutomatism( "gameLogic", "gameLogic" );
+    
+    this.attackFx = new DE.GameObject();
+    this.attackFx.enable = false;
+    this.add( this.attackFx );
+    
     if ( config.myIndex === index ) {
       this.bindInputs();
     }
-    
-    this.addAutomatism( "gameLogic", "gameLogic" );
   }
   
   Player.prototype = new DE.GameObject();
@@ -52,22 +57,34 @@ function( DE, config )
   // if it's my instance, bind the input to be able to control it
   Player.prototype.bindInputs = function()
   {
-    var self = this;
-    DE.Inputs.on( "keyDown", "left", function() { self.emit( "update-input", "axis", 1, -1 ); } );
-    DE.Inputs.on( "keyDown", "right", function() { self.emit( "update-input", "axis", 1, 1 ); } );
-    DE.Inputs.on( "keyUp", "right", function() { self.emit( "update-input", "axis", 1, 0 ); } );
-    DE.Inputs.on( "keyUp", "left", function() { self.emit( "update-input", "axis", 1, 0 ); } );
+    DE.Inputs.on( "keyDown", "left", function() { DE.emit( "player-update-input", "axis", 1, -1 ); } );
+    DE.Inputs.on( "keyDown", "right", function() { DE.emit( "player-update-input", "axis", 1, 1 ); } );
+    DE.Inputs.on( "keyUp", "right", function() { DE.emit( "player-update-input", "axis", 1, 0 ); } );
+    DE.Inputs.on( "keyUp", "left", function() { DE.emit( "player-update-input", "axis", 1, 0 ); } );
     
-    DE.Inputs.on( "keyDown", "up", function() { self.emit( "update-input", "axis", 2, -1 ); } );
-    DE.Inputs.on( "keyDown", "down", function() { self.emit( "update-input", "axis", 2, 1 ); } );
-    DE.Inputs.on( "keyUp", "down", function() { self.emit( "update-input", "axis", 2, 0 ); } );
-    DE.Inputs.on( "keyUp", "up", function() { self.emit( "update-input", "axis", 2, 0 ); } );
+    DE.Inputs.on( "keyDown", "up", function() { DE.emit( "player-update-input", "axis", 2, -1 ); } );
+    DE.Inputs.on( "keyDown", "down", function() { DE.emit( "player-update-input", "axis", 2, 1 ); } );
+    DE.Inputs.on( "keyUp", "down", function() { DE.emit( "player-update-input", "axis", 2, 0 ); } );
+    DE.Inputs.on( "keyUp", "up", function() { DE.emit( "player-update-input", "axis", 2, 0 ); } );
     
-    DE.Inputs.on( "keyDown", "action", function() { self.emit( "update-input", "action", 1 ); } );
-    // DE.Inputs.on( "keyUp", "action", function() { self.emit( "update-input", "action", 0 ); } );
+    DE.Inputs.on( "keyDown", "action", function() { DE.emit( "player-update-input", "action", 1 ); } );
+    // DE.Inputs.on( "keyUp", "action", function() { DE.emit( "player-update-input", "action", 0 ); } );
     
-    DE.Inputs.on( "keyDown", "switch-mode", function() { self.emit( "update-input", "switch", 1 ); } );
-    // DE.Inputs.on( "keyUp", "switch-mode", function() { self.emit( "update-input", "switch", 1 ); } );
+    DE.Inputs.on( "keyDown", "switch-mode", function() { DE.emit( "player-update-input", "switch" ); } );
+    // DE.Inputs.on( "keyUp", "switch-mode", function() { DE.emit( "player-update-input", "switch", 1 ); } );
+    
+    this.attackFx.checkHits = function()
+    {
+      for ( var i = 0, obj; i < config.instancied_resources_points.length; ++i )
+      {
+        obj = config.instancied_resources_points[ i ];
+        if ( obj.vector2.getDistance( this.getWorldPos() ) < obj.colliderRadius ) {
+          console.log( this.parent );
+          obj.getDamage( this.parent );
+        }
+      }
+    };
+    this.attackFx.addAutomatism( "checkHits", "checkHits", { interval: 100 } );
   };
   
   Player.prototype.updateAxes = function( x, y )
@@ -217,11 +234,25 @@ function( DE, config )
   // launch attack animation
   Player.prototype.attack = function()
   {
-    
+    this.attackFx.enable = true;
+    this.attackFx.moveTo( {
+      x: this.axes.x * 50
+      ,y: this.axes.y * 50
+    }, 200, function()
+    {
+      this.enable = false;
+      this.x = 0;
+      this.y = 0;
+    } );
   };
   
   // launch shield animation
   Player.prototype.shield = function()
+  {
+    
+  };
+  
+  Player.prototype.getLoot = function()
   {
     
   };

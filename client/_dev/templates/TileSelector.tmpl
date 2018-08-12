@@ -1,0 +1,25 @@
+<h2>Select a Tile</h2>
+
+<div class="container">
+  <div class="tiles-list">
+    <% _.each( tiles, function( tile ) {
+      if ( !tile.craftable ){ return; } %>
+      <div class="tile <%= tile.id == currentTile ? 'active' : '' %>" data-target="<%= tile.id %>">
+        <div class="tile-bg tile-<%= tile.id %>"></div>
+        <div class="tile-name"><%= tile.textId %></div>
+      </div>
+    <% } ) %>
+  </div>
+
+  <div class="tile-info">
+    <% if ( currentTile ) { %>
+      <h3>Name: <%= tiles[ currentTile ].textId %></h3>
+      <h4>Type: <%= tiles[ currentTile ].type %></h4>
+      <h4>Compatible with: <%= tiles[ currentTile ].compatibleTilesTypes %></h4>
+    <% } %>
+  </div>
+</div>
+
+<div class="lower-buttons">
+  <button class="action okBtn">Close</button>
+</div>

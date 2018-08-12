@@ -25,10 +25,23 @@ require.config( {
     ,'DE.NebulaOffline': '../plugins/NebulaOffline/index'
     ,'SheetRenderer'  : 'evol-engine/SheetRenderer'
     
-    ,'Game'  : 'Game'
-    ,'config': 'game/config'
-    ,'Player': 'game/Player'
-    // ,'lazzyChunk'
+    // tools
+    ,'tools.getTemplate': 'tools/getTemplate'
+    
+    // standard game stuff
+    ,'Game'          : 'Game'
+    ,'config'        : 'game/config'
+    ,'Player'        : 'game/Player'
+    ,'Tile'          : 'game/Tile'
+    ,'ResourceSpot'  : 'game/ResourceSpot'
+    ,'loadMap'       : 'game/loadMap'
+    ,'loadBuildBrush': 'game/loadBuildBrush'
+    
+    // views
+    ,'view.Craft'       : 'views/Craft'
+    ,'view.Inventory'   : 'views/Inventory'
+    ,'view.Main'        : 'views/Main'
+    ,'view.TileSelector': 'views/TileSelector'
     
     // ,'DE.TouchControl' : 'plugins/TouchControl'
     
