@@ -6,7 +6,7 @@ define( [ "config" ], function( config )
       return cb.call( ctx || window );
     
     var tag = document.createElement( "script" );
-    tag.src = config.server_url + "socket.io/socket.io.js";
+    tag.src = config.SERVER_URL + "socket.io/socket.io.js";
     var oldDefine = window.define;
     window.define = undefined;
     tag.onload = function()

@@ -4,6 +4,7 @@ function( DE, config )
   /******************
    * brush used to place a tile
    */
+  var brush;
    
   var _called = false;
   function loadBuildBrush( Game, player )
@@ -13,7 +14,7 @@ function( DE, config )
     }
     _called = true;
     
-    var brush = new DE.GameObject( {
+    brush = new DE.GameObject( {
       zindex: 100
       ,renderer: new DE.SheetRenderer( config.TILES[ 1 ].sheetIds[ 0 ], { scale: 0.5 } )
     } );
@@ -22,6 +23,7 @@ function( DE, config )
     brush.enable = false;
     brush.axes = { x: 0, y: 1 };
     brush.worldPos = { x: 0, y: 0 };
+    brush.offsets = { x: 0, y: 0 };
     brush.toggle = function( mode ) {
       this.enable = mode != "fight";
       this.updateAxes( this.axes.x, this.axes.y );
@@ -36,53 +38,30 @@ function( DE, config )
       
       this.axes.x = x;
       this.axes.y = x;
-      this.focusOffset = {
-         x: x * config.WORLD.TILE_W_HALF * 4
-        ,y: y * config.WORLD.TILE_H_HALF * 4
-      };
     }
     brush.placeTile = function()
     {
-      var wx = this.worldPos.x;
-      var wy = this.worldPos.y;
+      if ( !Inventory.hasTile( this.currentTile ) ) {
+        // TODO play sound "empty"
+        console.warn( "go make some tiles before trying to use it" );
+        return;
+      }
+      
+      var wx = this.worldPos.x + this.offsets.x;
+      var wy = this.worldPos.y + this.offsets.y;
       
       if ( wy < config.WORLD_DATA.length
         && wx < config.WORLD_DATA[ wy ].length
-        && config.WORLD_DATA[ wy ][ wx ] != 0 ) {
+        && config.WORLD_DATA[ wy ][ wx ] != 0
+        && config.WORLD_DATA[ wy ][ wx ] != -1 ) {
         // TODO play sound "error"
-        console.log( "no way, already something here fucker" );
+        console.log( "no way, already something here fucker", config.WORLD_DATA[ wy ][ wx ] );
         return;
       }
       else {
-        // We should be able to make the map bigger dynamically but the lazy rendering is tricky to update with this
-        // if ( wy >= config.WORLD_DATA.length || wx >= config.WORLD_DATA[ wy ].length ) {
-        //   // y doesn't exist, add a row
-        //   if ( wy >= config.WORLD_DATA.length ) {
-        //     var row = [];
-        //     for ( var x = 0; x < config.WORLD_DATA[ 0 ].length; ++x )
-        //     {
-        //       row.push( 0 );
-        //     }
-        //     config.WORLD_DATA.push( row );
-        //   }
-        //   // y exist but not the X, have to parse all Y and add an entry
-        //   else {
-        //     for ( var y = 0; y < config.WORLD_DATA.length; ++y )
-        //     {
-        //       config.WORLD_DATA[ y ].push( 0 );
-        //     }
-        //   }
-        //   // config.WORLD_DATA[ wy ][ wx ];
-        // }
         if ( wy < 0 || wx < 0 || wy >= config.WORLD_DATA.length || wx >= config.WORLD_DATA[ wy ].length ) {
           // TODO play sound "error"
           console.warn( "limit reach, you literally ran out of space" );
-          return;
-        }
-        
-        if ( !Inventory.hasTile( this.currentTile ) ) {
-          // TODO play sound "empty"
-          console.warn( "go make some" );
           return;
         }
         
@@ -103,7 +82,7 @@ function( DE, config )
         
         for ( var i = 0; i < ns.length; ++i )
         {
-          if ( ns[ i ] != 0 && tileData.compatibleTilesTypes.indexOf( config.TILES[ ns[ i ] ].type ) == -1 ) {
+          if ( ns[ i ] != 0 && ns[ i ] != -1 && config.TILES[ ns[ i ] ] && tileData.compatibleTilesTypes.indexOf( config.TILES[ ns[ i ] ].type ) == -1 ) {
             // TODO play sound "error"
             console.warn( "Incompatible type detected" );
             this.renderer.setTint( "0xff3333" );
@@ -111,45 +90,22 @@ function( DE, config )
           }
         }
         
-        config.WORLD_DATA[ wy ][ wx ] = this.currentTile;
-        Inventory.useTile( this.currentTile );
-        DE.emit( "new-tiles", [ { x: wx, y: wy, id: this.currentTile } ] );
+        DE.emit( "send-place-tile", this.currentTile, wx, wy );
       }
     };
     
     // when player move on the world coordinates
-    player.on( "worldPositionChanged", function( wx, wy, axes )
+    player.on( "worldPositionChanged", function( wx, wy, axes, direction )
     {
-      Game.scene.sortGameObjects();
-      brush.updateAxes( axes.x, axes.y );
-      
-      if ( axes.y < 0 && axes.x < 0 ) { wx -= 2; }
-      else if ( axes.y < 0 ) { wy -= 2; }
-      else if ( axes.x > 0 ) { wx += 2; }
-      else if ( axes.y > 0 ) { wy += 2; }
-      else if ( axes.x < 0 ) { wx -= 2; }
-      
-      brush.vector2.setPosition(
-        ( wx - wy ) * config.WORLD.TILE_W_HALF,
-        ( wx + wy ) * config.WORLD.TILE_H_HALF
-      );
       brush.worldPos.x = wx;
       brush.worldPos.y = wy;
-      
-      // not a free slot
-      if ( wy < 0 || wx < 0
-        || !Inventory.hasTile( brush.currentTile )
-        || wy >= config.WORLD_DATA.length
-        || wx >= config.WORLD_DATA[ wy ].length
-        || ( wy < config.WORLD_DATA.length
-          && wx < config.WORLD_DATA[ wy ].length
-          && config.WORLD_DATA[ wy ][ wx ] != 0 ) ) {
-        brush.renderer.setTint( "0xff3333" );
-      }
-      else {
-        brush.renderer.setTint( "0xffffff" );
-      }
+      updateBrushPos( wx, wy, axes, direction );
     } );
+    player.on( "update-axes", function( axes, direction )
+    {
+      console.log( "player update axes, direction", axes, direction )
+      updateBrushPos( brush.worldPos.x, brush.worldPos.y, axes, direction );
+    } )
     
     DE.on( "change-building-tile", function( tileId )
     {
@@ -158,6 +114,68 @@ function( DE, config )
       brush.renderer.texture = DE.PIXI.utils.TextureCache[ config.TILES[ tileId ].sheetIds[ 0 ] ];
     } );
     return brush;
+  }
+  
+  function updateBrushPos( wx, wy, axes, direction )
+  {
+    brush.updateAxes( axes.x, axes.y );
+    
+    var offsetX = 0;
+    var offsetY = 0;
+    switch( direction )
+    {
+      case 0:
+        offsetX = 1;
+        offsetY = 1;
+        break;
+      case 1:
+        offsetX = 1;
+        offsetY = 0;
+        break;
+      case 2:
+        offsetX = 1;
+        offsetY = -1;
+        break;
+      case 3:
+        offsetX = 0;
+        offsetY = -1;
+        break;
+      case 4:
+        offsetX = -1;
+        offsetY = -1;
+        break;
+      case 5:
+        offsetX = -1;
+        offsetY = 0;
+        break;
+      case 6:
+        offsetX = -1;
+        offsetY = 1;
+        break;
+      case 7:
+        offsetX = 0;
+        offsetY = 1;
+        break;
+    }
+    
+    brush.offsets.x = offsetX;
+    brush.offsets.y = offsetY;
+    
+    wx += offsetX;
+    wy += offsetY;
+    
+    brush.vector2.setPosition(
+      ( wx - wy ) * config.WORLD.TILE_W_HALF,
+      ( wx + wy ) * config.WORLD.TILE_H_HALF
+    );
+    
+    // not a free slot
+    if ( !Inventory.hasTile( brush.currentTile ) ) {
+      brush.renderer.setTint( "0xff3333" );
+    }
+    else {
+      brush.renderer.setTint( "0xffffff" );
+    }
   }
   
   return loadBuildBrush;

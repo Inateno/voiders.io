@@ -18,25 +18,56 @@ function( DE, config, Tile )
     config.mapTiles = [];
     var mapTiles = config.mapTiles;
     
-    // Game.map = new DE.GameObject();
-    // Game.map.updatable = false;
-    // Game.scene.add( Game.map );
-    Game.map = Game.scene; // if I don't want to use map finally
+    // some glitch right now but way faster
+    if ( DE.PIXI.utils.isMobile.any ) {
+      Game.map = new DE.GameObject();
+      Game.map.updatable = false;
+      Game.scene.add( Game.map );
+    }
+    else {
+      Game.map = Game.scene; // if I don't want to use map finally
+    }
     
-    for ( var y = myPos.y - config.LAZY_LOAD_RANGE; y < myPos.y + config.LAZY_LOAD_RANGE; ++y )
+    for ( var y = myPos.y - config.LAZY_RENDER_RANGE; y < myPos.y + config.LAZY_RENDER_RANGE; ++y )
     {
       mapTiles.push( [] );
-      for ( var x = myPos.x - config.LAZY_LOAD_RANGE, tileId, obj; x < myPos.x + config.LAZY_LOAD_RANGE; ++x )
+      for ( var x = myPos.x - config.LAZY_RENDER_RANGE, tileId, obj; x < myPos.x + config.LAZY_RENDER_RANGE; ++x )
       {
         // todo replace by a Tile class ?
         obj = new Tile( config.WORLD_DATA[ y ][ x ], x, y );
         Game.map.add( obj );
-        mapTiles[ y - ( myPos.y - config.LAZY_LOAD_RANGE ) ].push( obj );
+        mapTiles[ y - ( myPos.y - config.LAZY_RENDER_RANGE ) ].push( obj );
       }
     }
     
+    /* NOUVEAU FONCTIONNEMENT SERVER 
+      idée: on récupère un flat chunk allégé du serveur en rond (et pas en carré)
+      pour remettre ce chunk en matrice c'est chiant, surtout qu'on a pas de minX etc
+      
+      DONC
+      
+      on génère de toute façon une grille de void (on fait la grille de 4M ??)
+      ensuite le lazy fais son taff normal
+      mais quand on reçoi de la data serveur, on vient ré-écrire les valeurs de chaque case dans le chunk où on est
+      en lisant de manière plate le flatchunk (y'a juste a récupérer x, y se placer sur la grille foutre la valeur, fini merci de rien)
+    */
+    
+    var lastPosChunkAsked = {
+      x: myPos.x,
+      y: myPos.y
+    }
     myPlayer.on( "worldPositionChanged", function( wx, wy, axes )
     {
+      if ( Math.abs( lastPosChunkAsked.x - wx ) + Math.abs( lastPosChunkAsked.y - wy ) > config.LAZY_LOAD_SECURITY ) {
+        
+        if ( config.WORLD_DATA[ wy + axes.y * 23 >> 0 ][ wx + axes.x * 23 >> 0 ] == -1 ) {
+          console.log( "ask chunk" );
+          lastPosChunkAsked.x = wx;
+          lastPosChunkAsked.y = wy;
+          DE.emit( "ask-chunk", wx, wy );
+        }
+      }
+      
       var cut = [];
       var deltaY = 0;
       var deltaX = 0;
@@ -44,47 +75,55 @@ function( DE, config, Tile )
       var firstTilePos = mapTiles[ 0 ][ 0 ].worldPos;
       var lastTilePos = mapTiles[ mapTiles.length - 1 ][ mapTiles[ mapTiles.length - 1 ].length - 1 ].worldPos;
       
-      if ( wy - firstTilePos.y > config.LAZY_LOAD_RANGE ) {
+      if ( wy - firstTilePos.y > config.LAZY_RENDER_RANGE ) {
         cut = mapTiles.splice( 0, 1 )[ 0 ];
         mapTiles.push( cut );
-        deltaY = config.LAZY_LOAD_RANGE * 2;
+        deltaY = config.LAZY_RENDER_RANGE * 2;
       }
-      else if ( lastTilePos.y - wy > config.LAZY_LOAD_RANGE ) {
+      else if ( lastTilePos.y - wy > config.LAZY_RENDER_RANGE ) {
         cut = mapTiles.splice( mapTiles.length - 1, 1 )[ 0 ];
         mapTiles.unshift( cut );
-        deltaY = -config.LAZY_LOAD_RANGE * 2;
+        deltaY = -config.LAZY_RENDER_RANGE * 2;
       }
       
-      for ( var i = 0; i < cut.length; ++i )
+      for ( var i = 0, tileId; i < cut.length; ++i )
       {
         cut[ i ].worldPos.y += deltaY;
-        cut[ i ].updateTile( config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ] );
+        tileId = 0;
+        if ( config.WORLD_DATA[ cut[ i ].worldPos.y ] && config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ] ) {
+          tileId = config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ];
+        }
+        cut[ i ].updateTile( tileId );
       }
       
       cut = [];
       firstTilePos = mapTiles[ 0 ][ 0 ].worldPos;
       lastTilePos = mapTiles[ mapTiles.length - 1 ][ mapTiles[ mapTiles.length - 1 ].length - 1 ].worldPos;
-      if ( wx - firstTilePos.x > config.LAZY_LOAD_RANGE ) {
+      if ( wx - firstTilePos.x > config.LAZY_RENDER_RANGE ) {
         for ( var y = 0; y < mapTiles.length; ++y )
         {
           cut.push( mapTiles[ y ].splice( 0, 1 )[ 0 ] );
           mapTiles[ y ].push( cut[ cut.length - 1 ] );
         }
-        deltaX = config.LAZY_LOAD_RANGE * 2;
+        deltaX = config.LAZY_RENDER_RANGE * 2;
       }
-      else if ( lastTilePos.x - wx > config.LAZY_LOAD_RANGE ) {
+      else if ( lastTilePos.x - wx > config.LAZY_RENDER_RANGE ) {
         for ( var y = 0; y < mapTiles.length; ++y )
         {
           cut.push( mapTiles[ y ].splice( mapTiles[ y ].length - 1, 1 )[ 0 ] );
           mapTiles[ y ].unshift( cut[ cut.length - 1 ] );
         }
-        deltaX = -config.LAZY_LOAD_RANGE * 2;
+        deltaX = -config.LAZY_RENDER_RANGE * 2;
       }
       
       for ( var i = 0; i < cut.length; ++i )
       {
         cut[ i ].worldPos.x += deltaX;
-        cut[ i ].updateTile( config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ] );
+        tileId = 0;
+        if ( config.WORLD_DATA[ cut[ i ].worldPos.y ] && config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ] ) {
+          tileId = config.WORLD_DATA[ cut[ i ].worldPos.y ][ cut[ i ].worldPos.x ];
+        }
+        cut[ i ].updateTile( tileId );
       }
       
       // if ( deltaX > 0 || deltaY > 0 ) {
@@ -93,7 +132,7 @@ function( DE, config, Tile )
       // Game.scene.sortGameObjects();
     } );
     
-    DE.on( "new-tiles", function( tiles )
+    DE.on( "world-tiles-update", function( tiles )
     {
       var updated = {};
       

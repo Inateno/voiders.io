@@ -1,0 +1,109 @@
+{"frames": {
+
+"wall-x":{
+	"filename": "wall-x",
+	"frame": {"x":0,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-y":{
+	"filename": "wall-y",
+	"frame": {"x":256,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-c-N":{
+	"filename": "wall-c-N",
+	"frame": {"x":512,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-c-W":{
+	"filename": "wall-c-W",
+	"frame": {"x":768,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-c-S":{
+	"filename": "wall-c-S",
+	"frame": {"x":1024,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-c-E":{
+	"filename": "wall-c-E",
+	"frame": {"x":1280,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-end-NW":{
+	"filename": "wall-end-NW",
+	"frame": {"x":1536,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-end-SE":{
+	"filename": "wall-end-SE",
+	"frame": {"x":1792,"y":0,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-end-NE":{
+	"filename": "wall-end-NE",
+	"frame": {"x":0,"y":320,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+},
+
+"wall-end-SW":{
+	"filename": "wall-end-SW",
+	"frame": {"x":256,"y":320,"w":256,"h":320},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":256,"h":320},
+	"sourceSize": {"w":256,"h":320},
+	"pivot": {"x":0.5,"y":0.5}
+}
+},
+"meta": {
+	"image": "city-atlas.png",
+	"format": "RGBA8888",
+	"size": {"w":2048,"h":3200},
+	"scale": "1"
+}
+}

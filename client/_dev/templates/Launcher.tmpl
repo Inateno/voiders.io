@@ -1,0 +1,50 @@
+<!--<img src="img/logo.png" class="launcher-title" />-->
+<h1>Voiders.io</h1>
+<p>Re-craft the world with everyone</p>
+<br /><br />
+
+<h3>Info / Disclaimer</h3>
+<p>
+  This game have been made during the Ludum Dare 42 as a Jam entry by Inateno.<br />
+  You can see my entry here: <a href="https://ldjam.com/events/ludum-dare/42/$98304" target="_blank">LDJAM</a><br />
+  The game can be buggy, there is also a lot of features I want to do but because of the rules of the LD, all of this will happens after the judgment period (monsters, void attack, collisions lol).
+  <br /><br />
+  Any feedback appreciated (<a href="https://twitter.com/Inateno">@Inateno</a>)
+  <br /><br />
+  
+  Thanks
+</p>
+
+<div class="launcher-login">
+  <form class="connect-nebula" style="display:none">
+    <h3>Connection to Nebula</h3>
+    <input type="text" autocomplete="username" class="launcher-input-form launcher-nickname" placeholder="Nickname" />
+    <br />
+    <input type="password" autocomplete="current-password" class="launcher-input-form launcher-pw" placeholder="Password" />
+    <br />
+    <button class="btn btn-primary button-login form-button" style="width: 15rem; height: 5rem;margin-bottom: 1rem">Login</button>
+    <br />
+    <button class="show-guest-form">No account? Use guest</button>
+  </form> 
+  
+  <form class="connect-guest">
+    <button class="btn btn-primary guest-login form-button" style="width: 15rem; height: 5rem;margin-bottom: 1rem">Log as Guest</button>
+    <br />
+    <p>In guest mode, your actions are saved but as anonymous and the character will be deleted when you leave</p>
+    <br />
+    <button class="show-nebu-form">Have a Nebula account? Login!</button>
+  </form>
+  
+  <div class="loader" style="display:none">
+    <h2 class="connect-nebula-wip">Connecting</h2>
+    <h2 style="display:none" class="load-data-wip">Voiders loading</h2>
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+        <span class="sr-only">45% Complete</span>
+      </div>
+    </div>
+  </div>
+  <button class="mute">MUTE</button>
+</div>
+
+<div class="settings-wheel"></div>

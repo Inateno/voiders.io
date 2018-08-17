@@ -20,6 +20,7 @@ define( [
       
       $( "#render" ).append( this.$el );
       this.$el.hide();
+      DE.on( "craft-success", this.onCraftSuccess, this );
       
       getTemplate( "Craft", function( data )
       {
@@ -31,7 +32,7 @@ define( [
         self.waitForRender = false;
       } );
       
-      this.slots       = [ null, null, null, null, null, null ]; // need the void, null, null, null ];
+      this.materials   = [ null, null, null, null, null, null ]; // need the void, null, null, null ];
       this.tempUsed    = {};
       this.tileCreated = null;
     }
@@ -59,7 +60,7 @@ define( [
         , inventory      : Inventory.resources
         , currentItem    : this.currentItem
         , selectedSlot   : this.selectedSlot
-        , slots          : this.slots
+        , materials      : this.materials
         , tempUsed       : this.tempUsed
         , tileCreated    : this.tileCreated
       } ) );
@@ -97,7 +98,7 @@ define( [
         return;
       }
         
-      this.slots[ this.selectedSlot ] = itemId;
+      this.materials[ this.selectedSlot ] = itemId;
       this.$el.find( ".slot-" + this.selectedSlot ).html( itemId );
       this.closeSelector();
       
@@ -112,9 +113,9 @@ define( [
     , recalculateTempUsed: function()
     {
       this.tempUsed = {};
-      for ( var i = 0; i < this.slots.length; ++i )
+      for ( var i = 0, resId; i < this.materials.length; ++i )
       {
-        resId = this.slots[ i ];
+        resId = this.materials[ i ];
         
         if ( !this.tempUsed[ resId ] ) {
           this.tempUsed[ resId ] = 0;
@@ -130,24 +131,30 @@ define( [
       if ( !tileCreated ) {
         return;
       }
+      
+      DE.emit( "send-launch-craft", tileCreated, this.materials );
+    }
+    
+    ,onCraftSuccess: function( tileCreated )
+    {
       this.tileCreated = tileCreated;
       
       Inventory.addTile( tileCreated );
-      for ( var i = 0; i < this.slots.length; ++i )
+      for ( var i = 0; i < this.materials.length; ++i )
       {
-        Inventory.useResource( this.slots[ i ] );
+        Inventory.useResource( this.materials[ i ] );
       }
       this.tempUsed = {};
       
       // once all resources are consumed, check if the user has enough to make an other craft
       // else, empty the craft result (and the slot)
-      for ( var i = 0, resId; i < this.slots.length; ++i )
+      for ( var i = 0, resId; i < this.materials.length; ++i )
       {
-        resId = this.slots[ i ];
+        resId = this.materials[ i ];
         
         if ( !Inventory.hasResource( resId, 1 + this.tempUsed[ resId ] ) ) {
           console.log( "no more resource for ", resId, Inventory.resources[ resId ] );
-          this.slots[ i ]  = null;
+          this.materials[ i ]  = null;
           this.tileCreated = null;
         }
         else {
@@ -162,11 +169,11 @@ define( [
     
     , getTileCreated: function()
     {
-      if ( this.slots.indexOf( null ) !== -1 ) {
+      if ( this.materials.indexOf( null ) !== -1 ) {
         return false;
       }
       
-      var slots = this.slots;
+      var materials = this.materials;
       
       for ( var i in config.RECIPES )
       {
@@ -178,11 +185,11 @@ define( [
           types = poss[ p ];
           
           // must check all the types
-          for ( var t = 0; t < types.length; ++t )
+          for ( var t = 0, material; t < types.length; ++t )
           {
-            slot = slots[ p ]
-            slotTypes = config.RESOURCES[ slot ].types;
-            if ( slotTypes.indexOf( types[ 0 ] ) !== -1 ) {
+            material = materials[ p ]
+            materialTypes = config.RESOURCES[ material ].types;
+            if ( materialTypes.indexOf( types[ 0 ] ) !== -1 ) {
               failed = false;
               t = types.length;
             }

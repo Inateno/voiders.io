@@ -1,19 +1,19 @@
 define( [ 'DREAM_ENGINE', 'config', 'Inventory' ],
 function( DE, config, Inventory )
 {
-  function Player( index, data )
+  function Player( data )
   {
     DE.GameObject.call( this, {
-      x         : ( data.pos.x - data.pos.y ) * config.WORLD.TILE_W_HALF
-      , y       : ( data.pos.x + data.pos.y ) * config.WORLD.TILE_H_HALF
+      x         : ( data.worldX - data.worldY ) * config.WORLD.TILE_W_HALF
+      , y       : ( data.worldX + data.worldY ) * config.WORLD.TILE_H_HALF
       , zindex  : 2
       , renderers: [
-        new DE.SpriteRenderer( { spriteName: data.skin || "player", y: -20, x: -5, scale: 0.8 } )
+        new DE.SpriteRenderer( { spriteName: data.skin || "player", y: -20, x: 0, scale: 0.8 } )
         // , new DE.SpriteRenderer( { spriteName: "cursor" } ) // useful for debug the center of the player
       ]
     } );
     
-    this.index = index;
+    this.index = data.id;
     this.life  = data.life || 1;
     this.level = data.level || 1;
     this.speed = 5;
@@ -35,17 +35,18 @@ function( DE, config, Inventory )
     }
     
     this.worldPosition = {
-      x: data.pos.x,
-      y: data.pos.y
+      x: data.worldX,
+      y: data.worldY
     };
     
     this.addAutomatism( "gameLogic", "gameLogic" );
     
     this.attackFx = new DE.GameObject();
     this.attackFx.enable = false;
+    
     this.add( this.attackFx );
     
-    if ( config.myIndex === index ) {
+    if ( config.myIndex === data.id ) {
       this.bindInputs();
     }
   }
@@ -57,50 +58,51 @@ function( DE, config, Inventory )
   // if it's my instance, bind the input to be able to control it
   Player.prototype.bindInputs = function()
   {
-    DE.Inputs.on( "keyDown", "left", function() { DE.emit( "player-update-input", "axis", 1, -1 ); } );
-    DE.Inputs.on( "keyDown", "right", function() { DE.emit( "player-update-input", "axis", 1, 1 ); } );
-    DE.Inputs.on( "keyUp", "right", function() { DE.emit( "player-update-input", "axis", 1, 0 ); } );
-    DE.Inputs.on( "keyUp", "left", function() { DE.emit( "player-update-input", "axis", 1, 0 ); } );
+    var self = this;
+    DE.Inputs.on( "keyDown", "left", function() { DE.emit( "player-update-input", self, "axis", 1, -1 ); } );
+    DE.Inputs.on( "keyDown", "right", function() { DE.emit( "player-update-input", self, "axis", 1, 1 ); } );
+    DE.Inputs.on( "keyUp", "right", function() { DE.emit( "player-update-input", self, "axis", 1, 0 ); } );
+    DE.Inputs.on( "keyUp", "left", function() { DE.emit( "player-update-input", self, "axis", 1, 0 ); } );
     
-    DE.Inputs.on( "keyDown", "up", function() { DE.emit( "player-update-input", "axis", 2, -1 ); } );
-    DE.Inputs.on( "keyDown", "down", function() { DE.emit( "player-update-input", "axis", 2, 1 ); } );
-    DE.Inputs.on( "keyUp", "down", function() { DE.emit( "player-update-input", "axis", 2, 0 ); } );
-    DE.Inputs.on( "keyUp", "up", function() { DE.emit( "player-update-input", "axis", 2, 0 ); } );
+    DE.Inputs.on( "keyDown", "up", function() { DE.emit( "player-update-input", self, "axis", 2, -1 ); } );
+    DE.Inputs.on( "keyDown", "down", function() { DE.emit( "player-update-input", self, "axis", 2, 1 ); } );
+    DE.Inputs.on( "keyUp", "down", function() { DE.emit( "player-update-input", self, "axis", 2, 0 ); } );
+    DE.Inputs.on( "keyUp", "up", function() { DE.emit( "player-update-input", self, "axis", 2, 0 ); } );
     
-    DE.Inputs.on( "keyDown", "action", function() { DE.emit( "player-update-input", "action", 1 ); } );
+    DE.Inputs.on( "keyDown", "action", function() { DE.emit( "player-update-input", self, "action", 1 ); } );
     // DE.Inputs.on( "keyUp", "action", function() { DE.emit( "player-update-input", "action", 0 ); } );
     
-    DE.Inputs.on( "keyDown", "switch-mode", function() { DE.emit( "player-update-input", "switch" ); } );
+    DE.Inputs.on( "keyDown", "switch-mode", function() { DE.emit( "player-update-input", self, "switch" ); } );
     // DE.Inputs.on( "keyUp", "switch-mode", function() { DE.emit( "player-update-input", "switch", 1 ); } );
     
     this.attackFx.checkHits = function()
     {
-      for ( var i = 0, obj; i < config.instancied_resources_points.length; ++i )
+      for ( var i in config.instancied_resources_points )
       {
         obj = config.instancied_resources_points[ i ];
         if ( obj.vector2.getDistance( this.getWorldPos() ) < obj.colliderRadius ) {
-          console.log( this.parent );
-          obj.getDamage( this.parent );
+          DE.emit( "send-hit-on-resource", obj.id );
           return; // can only attack one stuff at a time ?
         }
       }
       
-      for ( var i = 0; i < config.instancied_world_interactive.length; ++i )
+      for ( var i in config.instancied_world_interactive )
       {
         obj = config.instancied_world_interactive[ i ];
-        console.log( obj.vector2.getDistance( this.getWorldPos() ), config.ENVS[ obj.id ].colliderRadius );
-        if ( obj.vector2.getDistance( this.getWorldPos() ) < config.ENVS[ obj.id ].colliderRadius ) {
-          console.log( this.parent );
-          DE.emit( config.ENVS[ obj.id ].triggeredMessage );
-          return; // can only attack one stuff at a time ?
+        if ( obj.vector2.getDistance( this.getWorldPos() ) < config.ENV_OBJECTS[ obj.oId ].colliderRadius ) {
+          DE.emit( config.ENV_OBJECTS[ obj.oId ].triggeredMessage );
+          return;
         }
       }
     };
     this.attackFx.addAutomatism( "checkHits", "checkHits", { interval: 100 } );
   };
   
-  Player.prototype.updateAxes = function( x, y )
+  Player.prototype.updateAxes = function( v1, v2 )
   {
+    var x = v1 === 1 ? v2 : this.axes.x;
+    var y = v1 === 2 ? v2 : this.axes.y;
+    
     this.axes = {
       x: y != 0 && x != 0 ? 0.75 * x : x,
       y: y != 0 && x != 0 ? 0.39 * y : y,
@@ -141,6 +143,8 @@ function( DE, config, Inventory )
     }
     
     this.renderer.currentLine = direction;
+    
+    this.emit( "update-axes", this.axes, direction );
   };
   
   // make the player move / collide
@@ -163,9 +167,14 @@ function( DE, config, Inventory )
       y: this.y + axes.y * this.speed
     };
     
+    // var worldX = ( nextPos.y / config.WORLD.TILE_H_HALF - ( nextPos.x / config.WORLD.TILE_W_HALF ) ) / 2 + 1 >> 0;
+    // var worldY = ( nextPos.x / config.WORLD.TILE_W_HALF + nextPos.y / config.WORLD.TILE_H_HALF) / 2 + 1 >> 0;
+    
+    
     var worldX = ( nextPos.x / config.WORLD.TILE_W_HALF + nextPos.y / config.WORLD.TILE_H_HALF) / 2 + 1 >> 0;
     var worldY = ( nextPos.y / config.WORLD.TILE_H_HALF - ( nextPos.x / config.WORLD.TILE_W_HALF ) ) / 2 + 1 >> 0;
     
+    /* DEAD, todo fix
     if ( worldY <= 0 || worldX <= 0
       || worldY >= config.WORLD_DATA.length
       || worldX >= config.WORLD_DATA[ worldY ].length
@@ -225,6 +234,7 @@ function( DE, config, Inventory )
       this.translate( { x: -axes.x * ( this.speed + iteration ), y: -axes.y * ( this.speed + iteration ) } );
       return
     }
+    /**/
     this._stuck = false;
     this.translate( { x: axes.x * ( this.speed + iteration ), y: axes.y * ( this.speed + iteration ) } );
     
@@ -234,7 +244,7 @@ function( DE, config, Inventory )
     
     if ( this.worldPosition.x != worldX
       || this.worldPosition.y != worldY ) {
-      this.emit( "worldPositionChanged", worldX, worldY, axes );
+      this.emit( "worldPositionChanged", worldX, worldY, axes, this.renderer.currentLine );
     }
     
     this.worldPosition.x = worldX;
@@ -264,14 +274,12 @@ function( DE, config, Inventory )
     
   };
   
-  Player.prototype.getLoot = function( resourceId )
+  Player.prototype.getLootFeedback = function( resourceId )
   {
     if ( this.index != config.myIndex ) { return; }
     
     // TODO play juicy sound
     
-    // TODO-SOCKET: this will be removed and put inside the socket
-    Inventory.addResource( resourceId );
   };
   
   return Player;

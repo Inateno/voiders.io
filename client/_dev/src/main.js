@@ -27,6 +27,9 @@ require.config( {
     
     // tools
     ,'tools.getTemplate': 'tools/getTemplate'
+    ,'tools.keepAlive'  : 'tools/keepAlive'
+    ,'tools.rest_api'   : 'tools/rest_api'
+    ,'tools.loadIO'     : 'tools/loadIO'
     
     // standard game stuff
     ,'Game'          : 'Game'
@@ -43,6 +46,7 @@ require.config( {
     ,'view.Inventory'   : 'views/Inventory'
     ,'view.Main'        : 'views/Main'
     ,'view.TileSelector': 'views/TileSelector'
+    ,'view.Launcher'    : 'views/Launcher'
     
     // ,'DE.TouchControl' : 'plugins/TouchControl'
     
@@ -71,8 +75,6 @@ function( DE, Game, inputs, audios, dictionary, images, achievements )
     , 'dictionary'         : dictionary
     , 'images'             : images
     , 'achievements'       : achievements
-    , 'about': { 'gameName': "Engine Dev Game 1", "namespace": "noting", 'author': "Inateno", 'gameVersion': "0.1" }
-    , 'saveModel': { "nShoots": 0 }, 'saveIgnoreVersion': true
-    // , 'loader': { interval: 10, scale: 2 }
+    , 'about': { 'gameName': "Engine Dev Game 1", "namespace": "voiders", 'author': "Inateno", 'gameVersion': "0.1" }
   } );
 } );

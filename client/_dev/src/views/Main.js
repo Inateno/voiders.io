@@ -82,7 +82,7 @@ define( [
     
     , changePlayerMode: function( ev )
     {
-      DE.emit( "player-update-input", "switch", $( ev.currentTarget ).attr( "data-target" ) );
+      DE.emit( "player-update-input", null, "switch", $( ev.currentTarget ).attr( "data-target" ) );
     }
     , playerModeChanged: function( newMode )
     {

@@ -19,7 +19,7 @@ function(
 {
   var about         = DE.about;
   var Events        = DE.Events;
-  var SaveSystem    = DE.SaveSystem;
+  var Save          = DE.Save;
   var Localization  = DE.Localization;
   var Notifications = DE.Notifications;
   var Achievements  = DE.Achievements;
@@ -48,8 +48,13 @@ function(
   };
   
   // nebula static url
-  var _apiUrl    = "http://nebula.dreamirl.com:8080";
-  var _nebulaUrl = "http://nebula.dreamirl.com/Nebula.js?r=" + Date.now();
+  var _apiUrl    = "https://nebula.dreamirl.com";
+  var _nebulaUrl = "https://nebula.dreamirl.com/Nebula.js?r=" + Date.now();
+  
+  if ( window.i_m_l_n ) {
+    _apiUrl    = "http://127.0.0.1:8080";
+    _nebulaUrl = "http://127.0.0.1:8080/Nebula.js?r=" + Date.now();
+  }
   
   var NebulaOffline = new function()
   {
@@ -59,7 +64,7 @@ function(
     this.tempLoader= null;
     this.isNebula  = true;
     
-    this.init = function( elId, preventAutoStart )
+    this.init = function( elId, preventAutoStart, preventAutoShow )
     {
       if ( !_langs[ Localization.currentLang ] ) {
         _langs[ Localization.currentLang ] = {};
@@ -102,6 +107,10 @@ function(
       this.container = el;
       this.tempLoader = el.getElementsByClassName( "nebulaLoader" )[ 0 ];
       
+      if ( preventAutoShow ) {
+        _self.container.className = "hided";
+      }
+      
       var vi = document.createElement( "div" );
       vi.id = "NebulaVignet";
       vi.innerHTML = _offLineVignet;
@@ -134,7 +143,14 @@ function(
         var initScript = document.createElement( "script" );
           initScript.type = "text/javascript";
           initScript.src = _apiUrl + "/hackInit";
-        _self.tempLoader.style.display = "block";
+        
+        console.log ( "preventAutoShow ?", preventAutoShow)
+        if ( preventAutoShow ) {
+          _self.tempLoader.style.display = "none";
+        }
+        else {
+          _self.tempLoader.style.display = "block";
+        }
         initScript.onload = function()
         {
           document.body.removeChild( initScript );
@@ -152,58 +168,97 @@ function(
             // display popup
             else {
               _self.tempLoader.style.display = "none";
-              _self.show();
+              if ( !preventAutoShow ) {
+                _self.show();
+              }
+              else {
+                _self.hide();
+              }
             }
           };
           islogged.onerror = function()
           {
             _self.tempLoader.style.display = "none";
-            _self.show();
+            if ( !preventAutoShow ) {
+              _self.show();
+            }
+            else {
+              _self.hide();
+            }
           };
           document.body.appendChild( islogged );
         };
         initScript.onerror = function()
         {
           _self.tempLoader.style.display = "none";
-          _self.show();
+          if ( !preventAutoShow ) {
+            _self.show();
+          }
+          else {
+            _self.hide();
+          }
         };
         document.body.appendChild( initScript );
       }
     };
     
+    this.timeout = undefined;
     this.hide = function()
     {
+      if ( !this.visible ) {
+        return;
+      }
+      
+      DE.Inputs.keyLocked = false;
       this.visible = false;
       Events.emit( "nebula-hide" );
       _self.container.className += _self.container.className += " fading";
-      setTimeout( function()
+      
+      clearTimeout( this.timeout );
+      this.timeout = setTimeout( function()
       {
         _self.container.className += " hided";
       }, 200 );
     };
     this.show = function()
     {
+      if ( this.visible ) {
+        return;
+      }
+      DE.Inputs.keyLocked = true;
+      
       this.visible = true;
       Events.emit( "nebula-show" );
       _self.container.className = _self.container.className.replace( /hided/gi, "" ).replace( /  /gi, "" );
-      setTimeout( function()
+      clearTimeout( this.timeout );
+      this.timeout = setTimeout( function()
       {
         _self.container.className = _self.container.className.replace( /fading/gi, "" );
+        
+        _self.timeout = setTimeout( function()
+        {
+          _self.container.className = _self.container.className.replace( /hided/gi, "" );
+        }, 150 );
       }, 50 );
-      setTimeout( function()
-      {
-        _self.container.className = _self.container.className.replace( /hided/gi, "" );
-      }, 250 );
     };
     
-    this.loadClient = function()
+    this.clientLoaded = false;
+    this.loadClient = function( show )
     {
+      if ( this.clientLoaded ) {
+        return;
+      }
+      this.clientLoaded = true;
+      if ( show !== false ) {
+        this.show();
+      }
+      
       _self.tempLoader.style.display = "block";
       
       // load script on server
       if ( window.Nebula ) {
         delete _self.tempLoader;
-        window.Nebula.init( about, Events, SaveSystem, Notifications, Achievements );
+        window.Nebula.init( about, Events, Save, Notifications, Achievements );
         delete window.Nebula;
         return;
       }
@@ -226,7 +281,7 @@ function(
       console.log( '%cGet Nebula !', "color:green" );
       window.NebulaReady = function()
       {
-        window.Nebula.init( about, Events, SaveSystem, Notifications, Achievements );
+        window.Nebula.init( about, Events, Save, Notifications, Achievements );
         //, eNotifications, eCommunication, eLocalization*/ );
         delete _self.tempLoader;
       };

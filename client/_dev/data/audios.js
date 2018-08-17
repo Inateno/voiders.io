@@ -12,16 +12,8 @@ function()
 {
   var audios = [
     // MUSICS
-    [ "test_music", "audio/test_music", [ 'mp3' ], { "preload": true, "loop": true, "isMusic": true } ]
-    , [ "test_sprite_music", "audio/test_music", [ 'mp3' ], { "preload": true, "loop": true, "isMusic": true
-      , "sprite": {
-        first: [ 0, 5000 ]
-        ,second: [ 10000, 20000 ]
-      } } ]
-    
-    // // FX
-    // ,[ "achievement-unlocked", "audio/achievement-unlocked", [ 'mp3', 'ogg' ], { "preload": true, "loop": false } ]
-    ,[ "piew", "audio/piew", [ 'mp3' ], { "preload": true, "loop": false, "pool": 10 } ]
+    [ "happiness", "audio/happiness", [ 'mp3', 'ogg' ], { "preload": true, "loop": true, "isMusic": true } ]
+    , [ "the-void", "audio/the-void", [ 'mp3', 'ogg' ], { "preload": true, "loop": true, "isMusic": true } ]
   ];
   
   return audios;

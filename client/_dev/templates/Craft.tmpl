@@ -16,11 +16,11 @@
     <h2>Altar of Craft</h2>
     <p>Craft a tile with the power of resources, each line is dedicated to a purpose</p>
     <div class="slots">
-      <% _.each( slots, function( slot, index ) { %>
+      <% _.each( materials, function( material, index ) { %>
         <%= index == 0 ? '<div>' : '' %>
         
-        <div class="craft-slot slot-<%= index %> <%= selectedSlot == index ? 'active' : ''  %> resource-<%= slot %>"
-          data-target="<%= index %>"><%= slot %></div>
+        <div class="craft-slot slot-<%= index %> <%= selectedSlot == index ? 'active' : ''  %> resource-<%= material %>"
+          data-target="<%= index %>"><%= material %></div>
         
         <%= ( index + 1 ) % 3 == 0 ? '</div>' : '' %>
         <%= ( index + 1 ) % 3 == 0 && index < 5 ? '<div>': '' %>

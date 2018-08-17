@@ -3,6 +3,7 @@ function( DE, config )
 {
   function Tile( tileId, worldX, worldY )
   {
+    if ( tileId == -1 ){ tileId = 0; }
     var tileData = config.TILES[ tileId ];
     DE.GameObject.call( this, {
       x         : ( worldX - worldY ) * config.WORLD.TILE_W_HALF
@@ -22,6 +23,8 @@ function( DE, config )
   
   Tile.prototype.updateTile = function( newTile )
   {
+    if ( newTile == -1 ){ newTile = 0; }
+    
     this.tileId = newTile;
     var sheets = config.TILES[ newTile ].sheetIds;
     this.x = ( this.worldPos.x - this.worldPos.y ) * config.WORLD.TILE_W_HALF;
@@ -43,14 +46,14 @@ function( DE, config )
   Tile.prototype.toggleVoid = function()
   {
     if ( this.tileId == 0 ) {
-      // this.updatable = true;
+      this.updatable = true;
       this.zindex = 2;
       this.y -= 24;
       this.fadeVoid();
       this.alpha = 0.8;
     }
     else {
-      // this.updatable = false;
+      this.updatable = false;
       this.zindex = 0;
       this._fadeData.done = true;
       this.alpha = 1;

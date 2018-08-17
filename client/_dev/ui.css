@@ -230,6 +230,21 @@
   margin: 1rem;
 }
 
+#Launcher {
+  text-align: center;
+}
+#Launcher .launcher-login {
+  position: absolute;
+  bottom  : 2rem;
+  width   : 100%;
+}
+.launcher-login input {
+  height       : 2rem;
+  width        : 10rem;
+  margin-bottom: 1rem;
+  padding      : 0.4rem;
+}
+
 
 
 /* 1159 655 */

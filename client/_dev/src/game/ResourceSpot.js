@@ -1,18 +1,20 @@
 define( [ 'DREAM_ENGINE', 'config' ],
 function( DE, config )
 {
-  function ResourceSpot( id, worldX, worldY )
+  function ResourceSpot( data )
   {
-    console.log( "resource spot", id, worldY, worldX );
-    this._data = config.RESOURCES_SPOTS[ id ];
+    this._data = config.RESOURCES_SPOTS[ data.resId ];
     DE.GameObject.call( this, {
-      x         : ( worldX - worldY ) * config.WORLD.TILE_W_HALF
-      , y       : ( worldX + worldY ) * config.WORLD.TILE_H_HALF
+      x         : ( data.x - data.y ) * config.WORLD.TILE_W_HALF
+      , y       : ( data.x + data.y ) * config.WORLD.TILE_H_HALF
       , zindex  : 2
-      , renderer: new DE.SpriteRenderer( this._data.rendererOpts )
+      , renderer: new DE.SheetRenderer( this._data.rendererOpts.sheetId, this._data.rendererOpts )
+      , id      : data.id
+      , resId   : data.resId
     } );
     
-    this.energy         = this._data.maxEnergy;
+    this.energy         = data.energy;
+    this.maxEnergy      = this._data.maxEnergy;
     this.colliderRadius = this._data.colliderRadius;
   }
   
@@ -20,22 +22,16 @@ function( DE, config )
   ResourceSpot.prototype.constructor = ResourceSpot;
   ResourceSpot.prototype.supr        = DE.GameObject.prototype;
   
-  ResourceSpot.prototype.getDamage = function( player )
+  ResourceSpot.prototype.getDamage = function( player, energy, loot )
   {
     this.shake( 10, 10, 200 );
-    // if ( this.energy <= 0 ) {
-    //   return;
-    // }
-    
-    this.energy -= player.atk;
-    // dropEvery // TODO use this later
-    var drop = this._data.minimumDrop + Math.random() * ( this._data.extraLuckDrop + 0.2 ) >> 0;
+    this.energy = energy;
     
     // retrieve vector between the player and the spot to create the good offset for the resource
     var vector2 = new DE.Vector2().getVector( player, this );
     var spot = this;
     
-    for ( var i = 0, obj, posr; i < drop; ++i )
+    for ( var i = 0, obj, posr; i < loot; ++i )
     {
       posr = this._data.dropOffsets[ Math.random() * this._data.dropOffsets.length >> 0 ];
       
@@ -47,12 +43,23 @@ function( DE, config )
       } );
       obj.moveTo( { x: 0, y: 0 }, 800, function()
       {
-        player.getLoot( spot._data.drop );
+        player.getLootFeedback( spot._data.drop );
         this.fadeOut( 200, true, this.askToKill );
       } );
       
       // add the object to the player this way even if the player move, the object will follow it
       player.add( obj );
+    }
+  };
+  
+  ResourceSpot.prototype.updateStatus = function( energy )
+  {
+    this.energy = energy;
+    if ( this.energy <= 0 ) {
+      this.alpha = 0.5;
+    }
+    else {
+      this.fadeTo( 0.5 + this.energy / this.maxEnergy / 2, 200, true );
     }
   }
   

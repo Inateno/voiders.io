@@ -1,0 +1,64 @@
+{"frames": {
+
+"dirt-blob":{
+	"filename": "dirt-blob",
+	"frame": {"x":264,"y":7,"w":350,"h":230},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":350,"h":230},
+	"sourceSize": {"w":350,"h":230},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"grass-statue":{
+	"filename": "grass-statue",
+	"frame": {"x":0,"y":0,"w":244,"h":330},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":244,"h":330},
+	"sourceSize": {"w":244,"h":330},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"forest-spirit":{
+	"filename": "forest-spirit",
+	"frame": {"x":638,"y":12,"w":652,"h":600},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":652,"h":600},
+	"sourceSize": {"w":652,"h":600},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"lantern-tree":{
+	"filename": "lantern-tree",
+	"frame": {"x":1293,"y":2,"w":282,"h":326},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":282,"h":326},
+	"sourceSize": {"w":282,"h":326},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"sand-castle":{
+	"filename": "sand-castle",
+	"frame": {"x":245,"y":275,"w":374,"h":332},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":374,"h":332},
+	"sourceSize": {"w":374,"h":332},
+	"pivot": {"x":0.5,"y":0.5}
+},
+"rock-golem":{
+	"filename": "rock-golem",
+	"frame": {"x":43,"y":634,"w":384,"h":440},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":384,"h":440},
+	"sourceSize": {"w":384,"h":440},
+	"pivot": {"x":0.5,"y":0.5}
+}
+},
+"meta": {
+	"image": "resource-spots.png",
+	"format": "RGBA8888",
+	"size": {"w":500,"h":500},
+	"scale": "1"
+}
+}
